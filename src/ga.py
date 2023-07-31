@@ -72,12 +72,50 @@ class Individual_Grid(object):
         right = width - 1
         for y in range(height):
             for x in range(left, right):
-                pass
+                # if not first floor
+                if y > 0:
+                    # if pipe body or top
+                    if genome[y][x] == '|' or genome[y][x] == 'T':
+                    #if pipe body or top not in the pipe
+                        if genome[y-1][x] != '|' and y != height and genome[y+1][x] != '|' or genome[y+1][x] != 'T':
+                            #change to wall
+                            genome[y][x] = 'X'
+                    
+                    # if a wall and 30% mutate
+                    if genome[y][x] == 'X' and random.randint(1, 10) < 4:
+                        # if a floating wall
+                        if genome[y-1][x] != 'X':
+                            temp1 = random.randint(1, 100)
+                            # 10% inside coin
+                            if  temp1 < 11:
+                                genome[y][x] = '?'
+                            # 10% inside mushroom
+                            elif temp1 < 21:
+                                genome[y][x] = 'M'
+                            # 50% breakable block
+                            elif temp1 < 71:
+                                genome[y][x] = 'B'
+                            # 30% inside empty space
+                            else:
+                                genome[y][x] = '-'
+                            
+                    #if empty and 20% mutate
+                    elif genome[y][x] == '-' and random.randint(1, 100) < 21:
+                        temp2 = random.randint(1, 100)
+                        # if second floor and 10%, change to enemy
+                        if  temp2 < 11 and y == 1:
+                            genome[y][x] = 'e'
+                        # 20% change to coin
+                        elif temp2 < 31:
+                            genome[y][x] = 'o'
+                    
+                    
         return genome
 
     # Create zero or more children from self and other
     def generate_children(self, other):
         new_genome = copy.deepcopy(self.genome)
+        other_genome = copy.deepcopy(other.genome)
         # Leaving first and last columns alone...
         # do crossover with other
         left = 1
@@ -86,9 +124,13 @@ class Individual_Grid(object):
             for x in range(left, right):
                 # STUDENT Which one should you take?  Self, or other?  Why?
                 # STUDENT consider putting more constraints on this to prevent pipes in the air, etc
-                pass
+
+                #50% to change (uniform crossover)
+                if random.randint(1, 100) < 51:
+                    new_genome[y][x] = other_genome[y][x]
+
         # do mutation; note we're returning a one-element tuple here
-        return (Individual_Grid(new_genome),)
+        return (Individual_Grid(self.mutate(new_genome)))
 
     # Turn the genome into a level string (easy for this genome)
     def to_level(self):
