@@ -74,15 +74,15 @@ class Individual_Grid(object):
             for x in range(left, right):
                 # if not first floor
                 if y > 0:
-                    # if pipe body or top
-                    if genome[y][x] == '|' or genome[y][x] == 'T':
+                    # if pipe body or top and not on the second floor
+                    if y > 1 and genome[y][x] == '|' or genome[y][x] == 'T':
                     #if pipe body or top not in the pipe
                         if genome[y-1][x] != '|' and y != height and genome[y+1][x] != '|' or genome[y+1][x] != 'T':
                             #change to wall
-                            genome[y][x] = 'X'
+                            genome[y][x] = 'B'
                     
-                    # if a wall and 30% mutate
-                    if genome[y][x] == 'X' and random.randint(1, 10) < 4:
+                    # if a wall and not on the second floor and 30% mutate
+                    if y > 1 and genome[y][x] == 'X' and random.randint(1, 10) < 4:
                         # if a floating wall
                         if genome[y-1][x] != 'X':
                             temp1 = random.randint(1, 100)
