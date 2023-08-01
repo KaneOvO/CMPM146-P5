@@ -416,10 +416,33 @@ def generate_successors(population):
     # STUDENT Design and implement this
     # Hint: Call generate_children() on some individuals and fill up results.
 
+    population = sorted(population, key=lambda ind: ind.fitness(), reverse=True)
+
+    # if Individual is Individual_Grid:
+    #     for _ in range(len(population)):
+    #         i = random.randint(0, int(len(population) / 5))
+    #         results.append(population[i].generate_children(population[i])[0])
+    
     if Individual is Individual_Grid:
         for _ in range(len(population)):
-            i = random.randint(0, len(population) // 5)
-            results.append(population[i].generate_children(population[i])[0])
+            temp = random.randint(1, 100)
+
+            if temp < 46:
+                i = random.randint(0, int(len(population) / 5))
+                results.append(population[i].generate_children(population[i])[0])
+            elif temp < 67:
+                i = random.randint(int(len(population) / 5), int(len(population) / 5) * 2)
+                results.append(population[i].generate_children(population[i])[0])
+            elif temp < 85:
+                i = random.randint(int(len(population) / 5) * 2, int(len(population) / 5) * 3)
+                results.append(population[i].generate_children(population[i])[0])
+            elif temp < 96:
+                i = random.randint(int(len(population) / 5) * 3, int(len(population) / 5) * 4)
+                results.append(population[i].generate_children(population[i])[0])
+            else:
+                i = random.randint(int(len(population) / 5) * 4, len(population) - 1)
+                results.append(population[i].generate_children(population[i])[0])
+
 
 
     return results
