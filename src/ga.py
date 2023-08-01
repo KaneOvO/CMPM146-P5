@@ -70,46 +70,71 @@ class Individual_Grid(object):
 
         left = 1
         right = width - 1
+
         for y in range(height):
             for x in range(left, right):
-                # if not first floor
-                if y > 0:
-                    # if pipe body or top and not on the second floor
-                    if y > 1 and genome[y][x] == '|' or genome[y][x] == 'T':
-                    #if pipe body or top not in the pipe
-                        if genome[y-1][x] != '|' and y != height and genome[y+1][x] != '|' or genome[y+1][x] != 'T':
-                            #change to wall
-                            genome[y][x] = 'B'
+                temp = random.randint(1, 100)
+
+                if temp < 31:
+                    genome[y][x] = random.choice(options)
+
+
+        for y in range(height):
+            for x in range(left, right):
+                if y < 3:
+                    genome[y][x] = '-'
+                
+                elif y == 15:
+                    if random.randint(1, 100) < 96:
+                        genome[y][x] = 'X'
+                    else:
+                        genome[y][x] = '-'
+                
+                else:
+                    # if a floating wall
+                    if genome[y][x] == 'X':
+                        if genome[y + 1][x] != 'X':
+                            genome[y][x] = '-'
                     
-                    # if a wall and not on the second floor and 30% mutate
-                    if y > 1 and genome[y][x] == 'X' and random.randint(1, 10) < 4:
-                        # if a floating wall
-                        if genome[y-1][x] != 'X':
-                            temp1 = random.randint(1, 100)
-                            # 10% inside coin
-                            if  temp1 < 11:
-                                genome[y][x] = '?'
-                            # 10% inside mushroom
-                            elif temp1 < 21:
-                                genome[y][x] = 'M'
-                            # 50% breakable block
-                            elif temp1 < 71:
-                                genome[y][x] = 'B'
-                            # 30% inside empty space
-                            else:
-                                genome[y][x] = '-'
-                            
-                    #if empty and 20% mutate
-                    elif genome[y][x] == '-' and random.randint(1, 100) < 21:
-                        temp2 = random.randint(1, 100)
-                        # if second floor and 10%, change to enemy
-                        if  temp2 < 11 and y == 1:
-                            genome[y][x] = 'e'
-                        # 20% change to coin
-                        elif temp2 < 31:
-                            genome[y][x] = 'o'
-                    
-                    
+                     # if floating pipe top
+                    elif genome[y][x] == "T":
+                        if genome[y + 1][x] not in ["X", "|"]:
+                            genome[y][x] = '-'
+
+                    # if floating pipe body
+                    elif genome[y][x] == "|":
+                        if genome[y + 1][x] not in ["X", "|"]:
+                            genome[y][x] = '-'
+                        elif genome[y - 1][x] not in ["T"]:
+                            genome[y][x] = '-'
+
+                    # if a enemy not on the solid block
+                    elif genome[y][x] == 'E':
+                        if genome[y + 1][x] not in ["X", "B", "?", "M", "T"]:
+                            genome[y][x] = "-"
+
+                    # if these is no space under block    
+                    elif genome[y][x] in ["?", "M", "B"]:
+                        if genome[y + 1][x] in ["X", "B", "?", "M", "|", "T"]:
+                            genome[y][x] = "-" 
+ 
+
+        genome[14][0] = "m"
+
+        genome[7][-1] = "v"
+
+        for col in range(8, 14):
+            genome[col][-1] = "f"
+
+        for col in range(14, 16):
+            genome[col][-1] = "X"
+
+        for col in range(0, 7):
+            genome[col][-1] = "-"
+
+        for col in range(0, 14):
+            genome[col][0] = "-"
+               
         return genome
 
     # Create zero or more children from self and other
@@ -130,7 +155,8 @@ class Individual_Grid(object):
                     new_genome[y][x] = other_genome[y][x]
 
         # do mutation; note we're returning a one-element tuple here
-        return (Individual_Grid(self.mutate(new_genome)))
+        return (Individual_Grid(self.mutate(new_genome)),)
+   
 
     # Turn the genome into a level string (easy for this genome)
     def to_level(self):
@@ -389,6 +415,13 @@ def generate_successors(population):
     results = []
     # STUDENT Design and implement this
     # Hint: Call generate_children() on some individuals and fill up results.
+
+    if Individual is Individual_Grid:
+        for _ in range(len(population)):
+            i = random.randint(0, len(population) // 5)
+            results.append(population[i].generate_children(population[i])[0])
+
+
     return results
 
 
