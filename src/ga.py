@@ -76,7 +76,7 @@ class Individual_Grid(object):
                 temp = random.randint(1, 100)
 
                 if temp < 31:
-                    genome[y][x] = random.choice(options)
+                    genome[y][x] = random.choices(["o", "B", "-", "?", "M", "X","E", "T", "|"], weights=[5, 5, 70, 6, 5, 5, 2, 1, 1], k = 1)[0]
 
 
         for y in range(height):
@@ -85,10 +85,12 @@ class Individual_Grid(object):
                     genome[y][x] = '-'
                 
                 elif y == 15:
+                    genome[y][x] = 'X'
                     if random.randint(1, 100) < 96:
                         genome[y][x] = 'X'
                     else:
                         genome[y][x] = '-'
+                
                 
                 else:
                     # if a floating wall
@@ -105,17 +107,21 @@ class Individual_Grid(object):
                     elif genome[y][x] == "|":
                         if genome[y + 1][x] not in ["X", "|"]:
                             genome[y][x] = '-'
-                        elif genome[y - 1][x] not in ["T"]:
+                        elif genome[y - 1][x] not in ["T", "|"]:
                             genome[y][x] = '-'
 
                     # if a enemy not on the solid block
                     elif genome[y][x] == 'E':
-                        if genome[y + 1][x] not in ["X", "B", "?", "M", "T"]:
+                        if genome[y + 1][x] not in ["X", "B", "?", "M"]:
+                            genome[y][x] = "-"
+                        elif genome[y - 1][x] in ["B", "?", "M"]:
                             genome[y][x] = "-"
 
                     # if these is no space under block    
                     elif genome[y][x] in ["?", "M", "B"]:
                         if genome[y + 1][x] in ["X", "B", "?", "M", "|", "T"]:
+                            genome[y][x] = "-" 
+                        elif y == 13 or y == 14:
                             genome[y][x] = "-" 
  
 
